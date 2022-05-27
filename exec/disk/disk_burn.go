@@ -224,9 +224,9 @@ func burnRead(ctx context.Context, directory, size string, cl spec.Channel) {
 }
 
 func getArgs(ctx context.Context, cl spec.Channel) (string, string, string) {
-	createArgs := "if=/dev/zero of=%s bs=%dM count=%d oflag=dsync"
-	runningReadArgs := "if=%s of=/dev/null bs=%sM count=%d iflag=dsync,direct,fullblock"
-	runningWriteArgs := "if=/dev/zero of=%s bs=%sM count=%d oflag=dsync"
+	createArgs := "if=/dev/zero of=%s bs=%dM count=%d conv=fsync"
+	runningReadArgs := "if=%s of=/dev/null bs=%sM count=%d conv=fsync iflag=direct,fullblock"
+	runningWriteArgs := "if=/dev/zero of=%s bs=%sM count=%d conv=fsync"
 	response := cl.Run(ctx, "cat", "/etc/os-release")
 	if !response.Success {
 		log.Warnf(ctx, "cat /etc/os-release failed, %v. use the default value.", response.Err)
