@@ -169,7 +169,7 @@ func (be *BurnIOExecutor) stop(ctx context.Context, read, write bool, directory 
 		}
 	}
 	if write {
-		resp := localChannel.Run(ctx, "rm", fmt.Sprintf("-rf %s*", path.Join(directory, writeFile)))
+		resp := localChannel.Run(ctx, "./busybox rm", fmt.Sprintf("-rf %s*", path.Join(directory, writeFile)))
 		if !resp.Success {
 			log.Errorf(ctx, "clean write file: %s", resp.Err)
 		}
@@ -193,7 +193,7 @@ func burnWrite(ctx context.Context, directory, size string, cl spec.Channel) {
 	_, _, ddRunningWriteArg := getArgs(ctx, localChannel)
 	for {
 		args := fmt.Sprintf(ddRunningWriteArg, tmpFileForWrite, size, count)
-		response := localChannel.Run(ctx, "dd", args)
+		response := localChannel.Run(ctx, "./busybox dd", args)
 		if !response.Success {
 			log.Errorf(ctx, "disk burn write, run dd err: %s", response.Err)
 			break
@@ -207,7 +207,7 @@ func burnRead(ctx context.Context, directory, size string, cl spec.Channel) {
 	tmpFileForRead := path.Join(directory, readFile)
 	ddCreateArg, ddRunningReadArg, _ := getArgs(ctx, localChannel)
 	createArgs := fmt.Sprintf(ddCreateArg, tmpFileForRead, 6, count)
-	response := localChannel.Run(ctx, "dd", createArgs)
+	response := localChannel.Run(ctx, "./busybox dd", createArgs)
 	if !response.Success {
 		log.Errorf(ctx, "disk burn read, run dd err: %s", response.Err)
 	}
@@ -215,7 +215,7 @@ func burnRead(ctx context.Context, directory, size string, cl spec.Channel) {
 	for {
 		args := fmt.Sprintf(ddRunningReadArg, tmpFileForRead, size, count)
 		//run with local channel
-		response := localChannel.Run(ctx, "dd", args)
+		response := localChannel.Run(ctx, "./busybox dd", args)
 		if !response.Success {
 			log.Errorf(ctx, "disk burn read, run dd err: %s", response.Err)
 			break
